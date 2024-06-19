@@ -23,7 +23,7 @@ bot = commands.InteractionBot()
 
 @bot.event
 async def on_ready():
-    print("мыша готова")
+    print("ботяра готов")
 
 
 @bot.slash_command(name="пинг", description='Выводит в чат задержку')
@@ -47,12 +47,6 @@ async def wikisearch(inter, запрос:str):
     #await inter.edit_original_response(embed=disnake.Embed(title=f'Результат на запрос "{запрос}"',description=page.summary(sentences=sentences)))
     ##except Exception as e:
     #    #await inter.edit_original_response(embed=disnake.Embed(title=f'Ошибка!', description=e))
-
-@bot.slash_command(name='отправить-идею', description='Скоро устареет')
-async def sendidea(inter, идея:str):
-    channel = bot.get_channel(1231328113800253540)
-    await channel.send(f'Новая идея!\n`{идея}`')
-    await inter.send('Идея успешно отправлена!', ephemeral=True)
 
 @bot.slash_command(name='кот', description='Кот. Просто выводит рандомную пикчу кота')
 async def catpicture(inter):
