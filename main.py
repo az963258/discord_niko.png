@@ -114,7 +114,6 @@ async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.U
 
     if user.id == 669577742924251159:
         isOwner = 'Да'
-        dopinfo = 'если вы не поняли, то это кодер бота'
     else:
         isOwner = 'Нет'
 
