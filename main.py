@@ -129,6 +129,12 @@ async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.U
     if user.id == 1137277749258629150: #жопеир
         dopinfo = '"добряк с мохнатой попкой" - AbstractDevs'
 
+    if user.id == 885576438646972496: #sionit_1337
+        dopinfo = 'Сионитовое сияние чистого гнева'
+
+    if user.id == : #abstractdevs
+        dopinfo = 'чебурек быстрого ответа'
+        
     embed=disnake.Embed(title=f'Информация о {user.display_name}',colour=disnake.Color.from_rgb(188, 49, 99) , description=f'📛 Оторбражаемое имя: {user.display_name}\n🔰 Никнейм: {user.name}\n🔢 Айди: {user.id}\n🔤 Ссылка: <https://discord.com/users/{user.id}>\n🤖 Является ли ботом?: {isBot}\n🔧 Является ли моим создателем?: {isOwner}\n📝 Дополнительная информация: {dopinfo}')
     embed.set_image(url=user.avatar.url)
 
