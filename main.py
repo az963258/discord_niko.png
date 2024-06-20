@@ -26,9 +26,13 @@ async def on_ready():
     print("ботяра готов")
 
 
+# кастомизация?
+main_color = disnake.Color.from_rgb(188, 49, 99)
+
+
 @bot.slash_command(name="пинг", description='Выводит в чат задержку')
 async def user(inter):
-    await inter.send(embed=disnake.Embed(title='❗ Понг!', description=f'`🛜 Задержка: {bot.latency*1000:.2f} мс`',  colour=disnake.Color.from_rgb(188, 49, 99)))
+    await inter.send(embed=disnake.Embed(title='❗ Понг!', description=f'🛜 Задержка: {bot.latency*1000:.2f} мс',  colour=main_color))
 
 
 @bot.message_command(name="Ревёрс")
@@ -51,6 +55,7 @@ async def wikisearch(inter, запрос:str):
 @bot.slash_command(name='кот', description='Кот. Просто выводит рандомную пикчу кота')
 async def catpicture(inter):
     await inter.response.defer()
+    
     response = requests.get("https://some-random-api.com/animal/cat")
     data = response.json()
 
@@ -59,6 +64,7 @@ async def catpicture(inter):
         image = requests.get(image_url)
 
     bytes = io.BytesIO(image.content)
+
     await inter.send(file=disnake.File(bytes, filename='kot.jpg'))
 
 @bot.slash_command(name='стим-юзер', description='Выполняет поиск юзера в стиме')
@@ -82,22 +88,22 @@ async def steamusersearch(inter, ник:str):
 
 @bot.slash_command(name='анонимное-сообщение', description="Отправляет сообщение от имени бота")
 async def anonimus(inter, сообщение:str):
-    churka_message = random.choice(['пшол нах', '⚠☢CHURKA DETECTED⚠☢', '🙌', 'неа', 'нельзя', 'чурькам ввод запрещён', 'катись нахуй', 'поплачь', '"вот тебе паяльник, запаяй себе ебальник"'])
-    
     if inter.author.id == 1242475166483878000:
         await inter.send(сообщение)
     else:
-        await inter.send("Сообщение-болванка", ephemeral=True)
+        await inter.send("Молодец! Ты прочитал это сообщение! Гордись собой что-ли", ephemeral=True)
         channel = inter.channel
-        await channel.send(сообщение)
         await inter.delete_original_response()
-        print(f'Анон сообщение| "{сообщение}" от {inter.author}')
+        await channel.send(сообщение)
+        print(f'Анон сообщение | "{сообщение}" от {inter.author}')
 
-
-
-
-
-
+@bot.slash_command(name='рандом', description='Выводит рандомное число в указанном диапазоне')
+async def randomchislo(inter, диапазон:int):
+    if диапазон <= 0:
+        await inter.send(embed = disnake.Embed(title='Эй!', description='Диапазон не может быть равен или быть меньше нуля.', color=main_color), ephemeral=True)
+    else:
+        embed = disnake.Embed(title=f'Твоё число: {random.randint(1, диапазон)}', color=main_color)
+        await inter.send(embed=embed)
 
 
 @bot.user_command(name="Информация о юзере")
@@ -114,6 +120,7 @@ async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.U
 
     if user.id == 669577742924251159:
         isOwner = 'Да'
+        dopinfo = 'если вы не поняли, то это кодер бота'
     else:
         isOwner = 'Нет'
 
@@ -132,13 +139,13 @@ async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.U
     if user.id == 885576438646972496: #sionit_1337
         dopinfo = 'Сионитовое сияние чистого гнева'
 
-    if user.id == : #abstractdevs
+    if user.id == 1056407095605469214: #abstractdevs
         dopinfo = 'чебурек быстрого ответа'
         
-    embed=disnake.Embed(title=f'Информация о {user.display_name}',colour=disnake.Color.from_rgb(188, 49, 99) , description=f'📛 Оторбражаемое имя: {user.display_name}\n🔰 Никнейм: {user.name}\n🔢 Айди: {user.id}\n🔤 Ссылка: <https://discord.com/users/{user.id}>\n🤖 Является ли ботом?: {isBot}\n🔧 Является ли моим создателем?: {isOwner}\n📝 Дополнительная информация: {dopinfo}')
+    embed=disnake.Embed(title=f'Информация о {user.display_name}',colour=main_color, description=f'📛 Оторбражаемое имя: {user.display_name}\n🔰 Никнейм: {user.name}\n🔢 Айди: {user.id}\n🔤 Ссылка: <https://discord.com/users/{user.id}>\n🤖 Является ли ботом?: {isBot}\n🔧 Является ли моим создателем?: {isOwner}\n📝 Дополнительная информация: {dopinfo}')
     embed.set_image(url=user.avatar.url)
 
-    await inter.response.send_message(embed=embed)
+    await inter.response.send_message(embed=embed, components=[disnake.ui.Button(label='Открыть аватарку', style=disnake.ButtonStyle.url, url=user.avatar.url)])
 
 
 bot.run(config["Token"])
