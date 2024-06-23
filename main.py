@@ -10,6 +10,7 @@ import requests
 import io
 import os
 #from steam_web_api import Steam
+import logging
 
 with open(u"./config.json", "r") as file:
     config = load(file)
@@ -21,9 +22,12 @@ bot = commands.InteractionBot()
 
 #wapi.set_lang('ru')
 
+logging.basicConfig(level=logging.INFO, filename="logs.log", format='%(asctime)s | %(levelname)s | %(message)s', encoding='utf-8')
+
 @bot.event
 async def on_ready():
     print("ботяра готов")
+    logging.info('бот запущен')
 
 
 # кастомизация?
@@ -31,12 +35,15 @@ main_color = disnake.Color.from_rgb(188, 49, 99)
 
 #эмбед ошибки
 async def error_embed(inter, error):
-    embed = disnake.Embed(title='Ой...', description=f'Возникла ошибка, подробности: `{error}`', color=main_color)
+    embed = disnake.Embed(title='❌ Ой...', description=f'🔍 Возникла ошибка, подробности: `{error}`', color=main_color)
     await inter.send(embed=embed)
+    print(f'Ошибка! | {error}')
+    logging.error(error)
 
 
 @bot.slash_command(name="пинг", description='Выводит в чат задержку')
 async def user(inter):
+    logging.info(f'Команда "пинг" отправлена, отправитель: {inter.author}')
     try:
         await inter.send(embed=disnake.Embed(title='❗ Понг!', description=f'🛜 Задержка: {bot.latency*1000:.2f} мс',  colour=main_color))
     except Exception as e:
@@ -45,6 +52,7 @@ async def user(inter):
 
 @bot.message_command(name="Ревёрс")
 async def reverse(inter: disnake.ApplicationCommandInteraction, message: disnake.Message):
+    logging.info(f'Команда "Ревёрс" отправлена, отправитель: {inter.author}')
     try:
         await inter.response.send_message(f"{message.content[::-1]}\n{message.jump_url}")
     except Exception as e:
@@ -68,8 +76,10 @@ async def wikisearch(inter, запрос:str):
 
 @bot.slash_command(name='кот', description='Кот. Просто выводит рандомную пикчу кота')
 async def catpicture(inter):
-    await inter.response.defer()
+    logging.info(f'Команда "кот" отправлена, отправитель: {inter.author}')
     
+    await inter.response.defer()
+
     try:
         response = requests.get("https://some-random-api.com/animal/cat")
         data = response.json()
@@ -80,7 +90,7 @@ async def catpicture(inter):
 
         bytes = io.BytesIO(image.content)
 
-        await inter.send('бу', file=disnake.File(bytes, filename='kot.jpg'))
+        await inter.send(file=disnake.File(bytes, filename='kot.jpg'))
     except Exception as e:
         await error_embed(inter, e)
 
@@ -105,17 +115,20 @@ async def steamusersearch(inter, ник:str):
 
 @bot.slash_command(name='анонимное-сообщение', description="Отправляет сообщение от имени бота")
 async def anonimus(inter, сообщение:str):
+    logging.info(f'Команда "анонимное-сообщение" отправлена, отправитель: {inter.author}')
     try:
         await inter.send("Молодец! Ты прочитал это сообщение! Гордись собой что-ли", ephemeral=True)
         channel = inter.channel
         await inter.delete_original_response()
         await channel.send(сообщение)
         print(f'Анон сообщение | "{сообщение}" от {inter.author}')
+        logging.info(f'Анон сообщение | "{сообщение}" от {inter.author}')
     except Exception as e:
         await error_embed(inter, e)
 
 @bot.slash_command(name='рандом', description='Выводит рандомное число в указанном диапазоне')
 async def randomchislo(inter, диапазон:int):
+    logging.info(f'Команда "рандом" отправлена, отправитель: {inter.author}')
     try:
         if диапазон <= 0:
             await inter.send(embed = disnake.Embed(title='Эй!', description='Диапазон не может быть равен или быть меньше нуля.', color=main_color), ephemeral=True)
@@ -127,13 +140,22 @@ async def randomchislo(inter, диапазон:int):
 
 @bot.slash_command(name='fakenitro-эмоджи', description='Генерирует ссылку на FakeNitro эмоджи')
 async def fakenitrogen(inter, эмоджи:str):
+    logging.info(f'Команда "fakenitro-эмоджи" отправлена, отправитель: {inter.author}')
     try:
         emoji = disnake.PartialEmoji.from_str(эмоджи)
         if emoji.url == '':
-            await inter.send(embed=disnake.Embed(title='Неправильный формат эмоджи', description='Ссылка на эмоджи пустая'))
+            await inter.send(embed=disnake.Embed(title='Неправильный формат эмоджи', description='Ссылка на эмоджи пустая', color=main_color))
         else:
             embed = disnake.Embed(title='Твоя FakeNitro ссылка на эмоджи', description=f"`[{emoji.name}]({emoji.url})`", color=main_color)
             await inter.send(embed=embed)
+    except Exception as e:
+        await error_embed(inter, e)
+
+@bot.slash_command(name='ошибка', description='вызывает эмбед ошибки с заданым типом ошибки')
+async def raiseaerror(inter):
+    logging.info(f'Команда "ошибка" отправлена, отправитель: {inter.author}')
+    try:
+        raise SyntaxError("вызвано пользователем")
     except Exception as e:
         await error_embed(inter, e)
 
@@ -141,6 +163,8 @@ async def fakenitrogen(inter, эмоджи:str):
 @bot.user_command(name="Информация о юзере")
 async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.User):
 
+    logging.info(f'Команда "Информация о юзере" отправлена, отправитель: {inter.author}')
+    
     isBot = None
     isOwner = None
     dopinfo = "нету"
