@@ -126,10 +126,14 @@ async def randomchislo(inter, диапазон:int):
         await error_embed(inter, e)
 
 @bot.slash_command(name='fakenitro-эмоджи', description='Генерирует ссылку на FakeNitro эмоджи')
-async def fakenitrogen(inter, эмоджи:disnake.Emoji):
-    embed = disnake.Embed(title='Твоя FakeNitro ссылка на эмоджи', description=f"`[{эмоджи.name}]({эмоджи.url})`", color=main_color)
+async def fakenitrogen(inter, эмоджи:str):
     try:
-        await inter.send(embed=embed)
+        emoji = disnake.PartialEmoji.from_str(эмоджи)
+        if emoji.url == '':
+            await inter.send(embed=disnake.Embed(title='Неправильный формат эмоджи', description='Ссылка на эмоджи пустая'))
+        else:
+            embed = disnake.Embed(title='Твоя FakeNitro ссылка на эмоджи', description=f"`[{emoji.name}]({emoji.url})`", color=main_color)
+            await inter.send(embed=embed)
     except Exception as e:
         await error_embed(inter, e)
 
