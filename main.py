@@ -125,6 +125,14 @@ async def randomchislo(inter, диапазон:int):
     except Exception as e:
         await error_embed(inter, e)
 
+@bot.slash_command(name='fakenitro-эмоджи', description='Генерирует ссылку на FakeNitro эмоджи')
+async def fakenitrogen(inter, эмоджи:disnake.Emoji):
+    embed = disnake.Embed(title='Твоя FakeNitro ссылка на эмоджи', description=f"`[{эмоджи.name}]({эмоджи.url})`", color=main_color)
+    try:
+        await inter.send(embed=embed)
+    except Exception as e:
+        await error_embed(inter, e)
+
 
 @bot.user_command(name="Информация о юзере")
 async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.User):
@@ -166,7 +174,7 @@ async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.U
         embed=disnake.Embed(title=f'Информация о {user.display_name}',colour=main_color, description=f'📛 Оторбражаемое имя: {user.display_name}\n🔰 Никнейм: {user.name}\n🔢 Айди: {user.id}\n🔤 Ссылка: <https://discord.com/users/{user.id}>\n🤖 Является ли ботом?: {isBot}\n🔧 Является ли моим создателем?: {isOwner}\n📝 Дополнительная информация: {dopinfo}')
         embed.set_image(url=user.avatar.url)
 
-        await inter.response.send_message(embed=embed, components=[disnake.ui.Button(label='Открыть аватарку', style=disnake.ButtonStyle.url, url=user.avatar.url)])
+        await inter.response.send_message(embed=embed, components=[disnake.ui.Button(label='🪪 Открыть аватарку', style=disnake.ButtonStyle.url, url=user.avatar.url)])
     except Exception as e:
         await error_embed(inter, e)
 
