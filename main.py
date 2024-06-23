@@ -1,26 +1,18 @@
 import json
-
 import disnake
 from json import load
 from disnake.ext import commands
 import random
 import asyncio
-#import wikipedia as wapi
 import requests
 import io
 import os
-#from steam_web_api import Steam
 import logging
 
 with open(u"./config.json", "r") as file:
     config = load(file)
 
-#steam = Steam(config["SteamApiToken"])
-
-
 bot = commands.InteractionBot()
-
-#wapi.set_lang('ru')
 
 logging.basicConfig(level=logging.INFO, filename="logs.log", format='%(asctime)s | %(levelname)s | %(message)s', encoding='utf-8')
 
@@ -28,6 +20,7 @@ logging.basicConfig(level=logging.INFO, filename="logs.log", format='%(asctime)s
 async def on_ready():
     print("ботяра готов")
     logging.info('бот запущен')
+    await bot.change_presence(status=disnake.Status.idle, activity=disnake.Game(name='OneShot'))
 
 
 # кастомизация?
@@ -58,22 +51,6 @@ async def reverse(inter: disnake.ApplicationCommandInteraction, message: disnake
     except Exception as e:
         await error_embed(inter, e)
 
-@bot.slash_command(name='вики-поиск', description='Ищет информацию на википедии')
-async def wikisearch(inter, запрос:str):
-    try:
-        await inter.send('В переработке')
-    except Exception as e:
-        await error_embed(inter, e)
-    #await inter.response.defer()
-    #sentences = 6
-    ##try:
-    #page = wapi.page(запрос)
-    #if len(page.summary) > 4000:
-    #    sentences = 4
-    #await inter.edit_original_response(embed=disnake.Embed(title=f'Результат на запрос "{запрос}"',description=page.summary(sentences=sentences)))
-    ##except Exception as e:
-    #    #await inter.edit_original_response(embed=disnake.Embed(title=f'Ошибка!', description=e))
-
 @bot.slash_command(name='кот', description='Кот. Просто выводит рандомную пикчу кота')
 async def catpicture(inter):
     logging.info(f'Команда "кот" отправлена, отправитель: {inter.author}')
@@ -93,25 +70,6 @@ async def catpicture(inter):
         await inter.send(file=disnake.File(bytes, filename='kot.jpg'))
     except Exception as e:
         await error_embed(inter, e)
-
-@bot.slash_command(name='стим-юзер', description='Выполняет поиск юзера в стиме')
-async def steamusersearch(inter, ник:str):
-    await inter.send("В переработке")
-    #vivod = steam.users.search_user(ник)
-    #games_massive = []
-    #recent_games = steam.users.get_user_recently_played_games(vivod["player"]["steamid"])
-    ##for game in range(recent_games["total_count"]):
-    #for game in range(5):
-    #    this_game = recent_games['games'][game]
-    #    this_game_name = this_game["name"]
-    #    games_massive.append(this_game_name)
-
-    #games_in_total = ", ".join(games_massive)
-
-    #embedd = disnake.Embed(title=f"Информация о {vivod['player']['personaname']}",
-    #                       description=f"Айди: {vivod['player']["steamid"]}\n[Ссылка]({vivod['player']["profileurl"]})\nКод страны: {vivod["player"]["loccountrycode"]}\nПоследние 5 игр: {games_in_total}")
-    #embedd.set_image(vivod["player"]["avatarfull"])
-    #await inter.send(embed=embedd)
 
 @bot.slash_command(name='анонимное-сообщение', description="Отправляет сообщение от имени бота")
 async def anonimus(inter, сообщение:str):
