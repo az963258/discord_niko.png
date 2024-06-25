@@ -117,6 +117,22 @@ async def raiseaerror(inter):
     except Exception as e:
         await error_embed(inter, e)
 
+@bot.slash_command(name='стоп', description='стопает бота')
+async def botstop(inter):
+    if bot.owner.id != inter.author.id:
+        await inter.send(embed=disnake.Embed(title='Ой', description='Данная команда доступна только овнеру', color=main_color))
+        return
+    await inter.send(embed=disnake.Embed(title='Выключаюсь...', color=main_color))
+    exit()
+
+@bot.slash_command(name='очистить-логи', description='очищает логи')
+async def clearlogs(inter):
+    if bot.owner.id != inter.author.id:
+        await inter.send(embed=disnake.Embed(title='Ой', description='Данная команда доступна только овнеру', color=main_color))
+        return
+    logsfile = open('logs.log', mode='w')
+    logsfile.write('')
+    await inter.send(embed=disnake.Embed(title='Логи очищены'))
 
 @bot.user_command(name="Информация о юзере")
 async def userinfo(inter: disnake.ApplicationCommandInteraction, user: disnake.User):
